@@ -6,15 +6,28 @@ export default function Todos() {
     const addTodo = (e) => {
         e.preventDefault();
         if(!todoText) return; // Prevents the user from creating a blank todo
-        setTodos([...todos, {text: todoText}])
+
+        const newTodo = { checked: false, text: todoText}
+        setTodos([...todos, newTodo])
+        
         setTodoText(""); // clears the text if the input that adds new todo
+    }
+
+    const toggleTodo = (index) => {
+        const newTodoList = [...todos];
+        newTodoList[index].checked = !newTodoList[index].checked; // changes the value of "checked" to its opposite
+        setTodos(newTodoList);
+
     }
 
     return (
     <div>
         {todos.map((todo, index) => (
             <div key={index} >
-                <input type="checkbox" />
+                <input 
+                    onChange={() => toggleTodo(index)}
+                    type="checkbox" 
+                />
                 <label>{todo.text}</label>
             </div>
         ))}
