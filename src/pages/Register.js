@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { CredentialsContext } from '../App'
 
 const handleErrors = async (response) => {
     if(!response.ok){
@@ -14,6 +15,7 @@ export function Register() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const [, setCredentials] = useContext(CredentialsContext);
 
     const register = (e) => {
         e.preventDefault();
@@ -29,6 +31,10 @@ export function Register() {
         })
         .then(handleErrors)
         .then(() => {
+            setCredentials({
+                username,
+                password,
+            })
             navigate("/");
         })
         .catch((error) => {
