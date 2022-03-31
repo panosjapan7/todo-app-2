@@ -1,10 +1,11 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export function Welcome() {
   return (
     <div>
         <h1>Welcome</h1>
+        <Link to="/register">Register</Link>
     </div>
   )
 }
