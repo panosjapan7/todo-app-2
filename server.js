@@ -32,9 +32,21 @@ app.post("/register", async (req, res) => {
     });
 })
 
-// app.listen(PORT, () => {
+app.post("/login", async (req, res) => {
+    const { username, password} = req.body;
+    const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
+    if(!user || user.password !== password){
+        res.status(403);
+        res.json({
+            message: "Invalid Login",
+        });
+        return;
+    }
+    res.json({
+        message: "Success",
+    });
+})
 
-// })
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
