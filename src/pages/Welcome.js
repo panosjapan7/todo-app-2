@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { CredentialsContext } from '../App'
+import Todos from '../components/Todos';
 
 export function Welcome() {
     const [credentials] = useContext(CredentialsContext);
@@ -11,6 +12,7 @@ export function Welcome() {
         {!credentials && <Link to="/register">Register</Link>}
         < br/>
         {!credentials && <Link to="/login">Login</Link>}
+        {credentials && <Todos />}
     </div>
     )
 }
