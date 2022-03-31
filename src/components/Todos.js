@@ -5,8 +5,9 @@ export default function Todos() {
     const [todoText, setTodoText] = useState("");
     const addTodo = (e) => {
         e.preventDefault();
+        if(!todoText) return; // Prevents the user from creating a blank todo
         setTodos([...todos, {text: todoText}])
-        setTodoText("");
+        setTodoText(""); // clears the text if the input that adds new todo
     }
 
     return (
