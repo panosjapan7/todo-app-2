@@ -8,8 +8,8 @@ mongoose.connect("mongodb://localhost/todo-app-2");
 
 // User Schema
     const userSchema = new mongoose.Schema({
-        username: String,
-        password: String,
+        username: { type: String, required: true, trim: true},
+        password: { type: String, required: true, trim: true},
     })
     const User = mongoose.model("User", userSchema)
 

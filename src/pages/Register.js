@@ -50,12 +50,14 @@ export function Register() {
             <input 
                 placeholder="username"
                 onChange={(e) => setUsername(e.target.value)}
+                required
             />
             <br/>
             <input 
                 placeholder="password"
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
+                required
             />
             <br/>
             <button type="submit">Register</button>
