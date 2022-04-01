@@ -5,7 +5,7 @@ export default function Todos() {
     const [todos, setTodos] = useState([]);
     const [todoText, setTodoText] = useState("");
     const [credentials, setCredentials] = useContext(CredentialsContext);
-
+    const [filter, setFilter] = useState("uncompleted");
     
 
     const persist = (newTodos) => {
@@ -46,20 +46,36 @@ export default function Todos() {
         persist(newTodos);
     }
 
-    const toggleTodo = (index) => {
+    const toggleTodo = (id) => {
         const newTodoList = [...todos];
-        newTodoList[index].checked = !newTodoList[index].checked; // changes the value of "checked" to its opposite
+        
+        // changes the value of "checked" to its opposite
+        const todoItem = newTodoList.find((todo) => todo._id === id);
+        todoItem.checked = !todoItem.checked;
+        
         setTodos(newTodoList);
         persist(newTodoList);
     }
 
+    const getTodos = () => {
+        return todos.filter((todo) => filter === "completed" ? todo.checked : !todo.checked);
+    }
+
+    const changeFilter = (newFilter) => {
+        setFilter(newFilter);
+    };
+
     return (
     <div>
-        {todos.map((todo, index) => (
-            <div key={index} >
+        <select onChange={(e) => changeFilter(e.target.value)}>
+            <option value="completed">Completed</option>
+            <option value="uncompleted">Uncompleted</option>
+        </select>
+        {getTodos().map((todo) => (
+            <div key={todo._id} >
                 <input 
                     checked={todo.checked}
-                    onChange={() => toggleTodo(index)}
+                    onChange={() => toggleTodo(todo._id)}
                     type="checkbox" 
                 />
                 <label>{todo.text}</label>
