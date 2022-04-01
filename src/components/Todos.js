@@ -67,7 +67,7 @@ export default function Todos() {
 
     return (
     <div>
-        <select onChange={(e) => changeFilter(e.target.value)}>
+        <select value={filter} onChange={(e) => changeFilter(e.target.value)}>
             <option value="completed">Completed</option>
             <option value="uncompleted">Uncompleted</option>
         </select>
