@@ -20,6 +20,7 @@ mongoose.connect("mongodb://localhost/todo-app-2");
             {
                 checked: Boolean,
                 text: String,
+                id: String,
             }
         ],
     })
@@ -116,10 +117,12 @@ app.get("/todos", async (req, res) => {
     //End of Authorization
 
     //Finds the todos Schema that matches the user's id
-        const { todos } = await Todos.findOne({userId: user._id}) //Get just the todos from Schema, not the userId
+        console.log("before { todos }");
+        const { todos } = await Todos.findOne({userId: user._id}) || {} //Get just the todos from Schema, not the userId
         
+        console.log("we are here");
     
-    res.json(todos);
+        res.json(todos)
 })
 
 

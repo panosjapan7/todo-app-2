@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { CredentialsContext } from '../App';
+import { v4 as uuidv4 } from "uuid";
 
 export default function Todos() {
     const [todos, setTodos] = useState([]);
@@ -37,7 +38,8 @@ export default function Todos() {
         e.preventDefault();
         if(!todoText) return; // Prevents the user from creating a blank todo
 
-        const newTodo = { checked: false, text: todoText}
+        // const newTodo = { _id: uuidv4(), checked: false, text: todoText};
+        const newTodo = { id: uuidv4(), checked: false, text: todoText};
         const newTodos = [...todos, newTodo];
         setTodos(newTodos)
         
@@ -50,7 +52,7 @@ export default function Todos() {
         const newTodoList = [...todos];
         
         // changes the value of "checked" to its opposite
-        const todoItem = newTodoList.find((todo) => todo._id === id);
+        const todoItem = newTodoList.find((todo) => todo.id === id);
         todoItem.checked = !todoItem.checked;
         
         setTodos(newTodoList);
@@ -72,10 +74,10 @@ export default function Todos() {
             <option value="uncompleted">Uncompleted</option>
         </select>
         {getTodos().map((todo) => (
-            <div key={todo._id} >
+            <div key={todo.id} >
                 <input 
                     checked={todo.checked}
-                    onChange={() => toggleTodo(todo._id)}
+                    onChange={() => toggleTodo(todo.id)}
                     type="checkbox" 
                 />
                 <label>{todo.text}</label>
