@@ -60,6 +60,7 @@ app.post("/login", async (req, res) => {
 })
 
 app.post("/todos", async (req, res) => {
+    //Authorization
     // We want to check which user accessed the "/todos" endpoint:
         const { authorization } = req.headers; //saves the user credentials to this object
         const [, token] = authorization.split(" ");
@@ -75,7 +76,8 @@ app.post("/todos", async (req, res) => {
             });
             return;
         }
-    
+    //End of Authorization
+
     //Finds the todos Schema that matches the user's id
         const todos = await Todos.findOne({userId: user._id}) 
         
@@ -93,6 +95,31 @@ app.post("/todos", async (req, res) => {
             }
     
     res.json(todosItems);
+})
+
+app.get("/todos", async (req, res) => {
+    //Authorization
+    // We want to check which user accessed the "/todos" endpoint:
+        const { authorization } = req.headers; //saves the user credentials to this object
+        const [, token] = authorization.split(" ");
+        const [username, password] = token.split(":");
+    
+    // If the user doesn't exist, we send an error message
+        const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
+        if(!user || user.password !== password){
+            res.status(403);
+            res.json({
+                message: "Invalid Login",
+            });
+            return;
+        }
+    //End of Authorization
+
+    //Finds the todos Schema that matches the user's id
+        const { todos } = await Todos.findOne({userId: user._id}) //Get just the todos from Schema, not the userId
+        
+    
+    res.json(todos);
 })
 
 
