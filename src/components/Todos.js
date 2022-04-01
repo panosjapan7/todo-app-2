@@ -50,7 +50,7 @@ export default function Todos() {
         const newTodoList = [...todos];
         newTodoList[index].checked = !newTodoList[index].checked; // changes the value of "checked" to its opposite
         setTodos(newTodoList);
-
+        persist(newTodoList);
     }
 
     return (
@@ -58,6 +58,7 @@ export default function Todos() {
         {todos.map((todo, index) => (
             <div key={index} >
                 <input 
+                    checked={todo.checked}
                     onChange={() => toggleTodo(index)}
                     type="checkbox" 
                 />
