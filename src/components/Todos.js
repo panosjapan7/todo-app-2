@@ -15,11 +15,23 @@ export default function Todos() {
                 "Content-Type": "application/json",
                 Authorization: `Basic ${credentials.username}:${credentials.password}`,
             },
-            body: JSON.stringify(newTodos) //we're passing the todos
+            body: JSON.stringify(newTodos), //we're passing the todos
         })
         .then(() => {})
-        
-    }
+    };
+
+    // Fetches the todos from the user's todos Schema when the Todos.js components mounts/loads
+        useEffect(() => {
+            fetch(`http://localhost:4000/todos`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Basic ${credentials.username}:${credentials.password}`,
+            },
+        })
+        .then((response) => response.json())
+        .then((todos) => setTodos(todos))
+        }, [])
 
     const addTodo = (e) => {
         e.preventDefault();
