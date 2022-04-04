@@ -42,8 +42,6 @@ export default function Todos() {
         // todos.reverse() 
 
         setTodos(todos)
-        // console.log("persistFetch() triggered")
-        // console.log(todos)
     })
     }
 
@@ -87,10 +85,6 @@ export default function Todos() {
         // const newTodo = { id: uuidv4(), checked: false, text: todoText, time: "2022-04-03T07:43:55.557+00:00" }
         const newTodo = { id: uuidv4(), checked: false, text: todoText, time: new Date() }
         console.log(newTodo.time);
-        // console.log("newTodo.time.toGMTString()");
-        // console.log(newTodo.time.toGMTString());
-        // const newTodoTime = newTodo.time.toGMTString();
-        // newTodo.time = newTodoTime;
 
         todos.unshift(newTodo); //Inserts thew newly added todo task element in the first position in the array instead of the last position
 
@@ -101,8 +95,6 @@ export default function Todos() {
         
         setTodoText(""); // clears the text if the input that adds new todo
 
-        // persistFetch();
-        // console.log("persistFetch() triggered")
         persist(todos)
 
     }

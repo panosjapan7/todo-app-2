@@ -21,8 +21,8 @@ mongoose.connect("mongodb://localhost/todo-app-2");
                 checked: Boolean,
                 text: String,
                 id: String,
-                // time : { type : Date, default: Date.now }, //Value is added to time because of this line in the todosSchema 
-                time : Date, //If I use this, every task has null time value
+                // time : { type : Date, default: Date.now }, // Testing purposes
+                time : Date, 
             },
         ],
     })
