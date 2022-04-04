@@ -21,7 +21,9 @@ mongoose.connect("mongodb://localhost/todo-app-2");
                 checked: Boolean,
                 text: String,
                 id: String,
-            }
+                // time : { type : Date, default: Date.now }, //Value is added to time because of this line in the todosSchema 
+                time : Date, //If I use this, every task has null time value
+            },
         ],
     })
     const Todos = mongoose.model("Todos", todosSchema)
@@ -67,6 +69,8 @@ app.post("/todos", async (req, res) => {
         const [, token] = authorization.split(" ");
         const [username, password] = token.split(":");
         const todosItems = req.body;
+        console.log("req.body")
+        console.log(req.body)
     
     // If the user doesn't exist, we send an error message
         const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
@@ -119,9 +123,33 @@ app.get("/todos", async (req, res) => {
     //Finds the todos Schema that matches the user's id
         console.log("before { todos }");
         const { todos } = await Todos.findOne({userId: user._id}) || {} //Get just the todos from Schema, not the userId
+
+        // todos.sort()
         
-        console.log("we are here");
-    
+        // Sorts the todos array to descending by time
+            // function sortTasks(a, b) {
+            //     if(a.time < b.time){
+            //         return 1;
+            //     }
+            //     if(a.time > b.time){
+            //         return -1;
+            //     }
+            //     return 0;
+            // }
+
+            if(todos !== undefined){
+
+                todos.sort(function sortTasks(a, b){
+                    return a.time - b.time;
+                })
+                
+                // todos.reverse()
+            }
+
+            // todos.sort(sortTasks);
+        // End of: Sorts the todos array to descending by time
+        
+        // console.log(todos);
         res.json(todos)
 })
 
