@@ -8,6 +8,11 @@ export default function Todos() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
     const [filter, setFilter] = useState("uncompleted"); 
     
+
+    // For Search function
+        const [searchInput, setSearchInput] = useState("");
+    // END OF For Search function
+
     // Makes a request to backend and sends the current state of the Todos array
     const persist = (newTodos) => {
         fetch(`http://localhost:4000/todos`, {
@@ -131,14 +136,91 @@ export default function Todos() {
         setFilter(newFilter);
     }
 
+    // For Search function
+        const searchFunction = (query) => {
+            
+            if(query){
+                
+                const result = todos.filter((todo) => todo.text.toLowerCase().includes(query.toLowerCase()) && todo.checked == false)
+                
+                console.log(result)
+                return result;
+            }
+        }
+
+        const searchFunctionCompleted = (query) => {
+            
+            if(query){
+                
+                const result = todos.filter((todo) => todo.text.toLowerCase().includes(query.toLowerCase()) && todo.checked == true)
+                
+                console.log(result)
+                return result;
+            }
+        }
+
+    // END OF For Search function
+
+
     return (
     <div>
         <select value={filter} onChange={(e) => changeFilter(e.target.value)}>
             <option value="completed">Completed</option>
             <option value="uncompleted">Uncompleted</option>
         </select>
+        
+        <br/>
+        <br/>
+        
+        <form // onSubmit={searchFunction()}
+        >
+            <input
+                type="text"
+                onChange={(e) => {setSearchInput(e.target.value); searchFunction(e.target.value)}}
+                placeholder="Search"
+                // onChange={(e) => searchFunction(setSearchInput(e.target.value))}
+                // value={searchInput}
+            />
+        </form>
 
-        {getTodos().map((todo) => (
+        <br/>
+        
+        
+        {searchInput && filter === "uncompleted" && searchFunction(searchInput).map((todo) => (
+            <div key={todo.id}>
+                <input 
+                    checked={todo.checked}
+                    onChange={() => toggleTodo(todo.id)}
+                    type="checkbox" 
+                />
+                <label>{todo.text}</label>
+
+                <span>(created: {readableDate(todo.time)})</span> 
+                <br/>
+            </div>
+            ))
+            
+            // <p>TEST</p>
+        }
+
+        {searchInput && filter === "completed" && searchFunctionCompleted(searchInput).map((todo) => (
+            <div key={todo.id}>
+                <input 
+                    checked={todo.checked}
+                    onChange={() => toggleTodo(todo.id)}
+                    type="checkbox" 
+                />
+                <label>{todo.text}</label>
+
+                <span>(created: {readableDate(todo.time)})</span> 
+                <br/>
+            </div>
+            ))
+            
+            // <p>TEST</p>
+        }
+
+        {!searchInput && getTodos().map((todo) => (
             <div key={todo.id} >
                 <input 
                     checked={todo.checked}
