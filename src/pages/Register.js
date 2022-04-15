@@ -17,8 +17,9 @@ export function Register() {
     const navigate = useNavigate();
     const [, setCredentials] = useContext(CredentialsContext);
 
+    // Makes an HTTP request to the backend
     const register = (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevents webpage from reloading when we submit the form
         fetch(`http://localhost:4000/register`, {
             method: "POST",
             headers: {

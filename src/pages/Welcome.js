@@ -4,6 +4,8 @@ import { CredentialsContext } from '../App'
 import Todos from '../components/Todos';
 
 export function Welcome() {
+    
+    // I import the context of whatever I'm sending from CredentialsContext.Provider
     const [credentials, setCredentials] = useContext(CredentialsContext);
     
     const logout = () => {
@@ -13,10 +15,15 @@ export function Welcome() {
     return (
     <div>
         {credentials && <button onClick={logout} >Logout</button>}
+
         <h1>Welcome {credentials && credentials.username}</h1>
+
         {!credentials && <Link to="/register">Register</Link>}
+
         < br/>
+
         {!credentials && <Link to="/login">Login</Link>}
+        
         {credentials && <Todos />}
     </div>
     )

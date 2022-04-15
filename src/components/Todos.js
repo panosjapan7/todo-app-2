@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { CredentialsContext } from '../App';
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"; // It wasn't storing unique ids to Todo tasks so I am using this.
 
 export default function Todos() {
-    const [todos, setTodos] = useState([]);
-    const [todoText, setTodoText] = useState("");
+    const [todos, setTodos] = useState([]); // Array that includes all the Todo tasks of a user
+    const [todoText, setTodoText] = useState(""); // Value of one Todo task sent via form
     const [credentials, setCredentials] = useContext(CredentialsContext);
-    const [filter, setFilter] = useState("uncompleted");
+    const [filter, setFilter] = useState("uncompleted"); 
     
-
+    // Makes a request to backend and sends the current state of the Todos array
     const persist = (newTodos) => {
         fetch(`http://localhost:4000/todos`, {
             method: "POST",
@@ -24,7 +24,7 @@ export default function Todos() {
         })
     };    
 
-    // I execute this when the user adds a new task while logged in - otherwise, I need to refresh the page somehow to have useEffect() run and do the job
+    // I execute this when the user adds a new task while logged in - otherwise, I need to refresh the page in some way to execute useEffect() again and do the rendering
     // and I wasn't sure how to achieve that.
     const persistFetch = () => {
         fetch(`http://localhost:4000/todos`, {
@@ -56,15 +56,16 @@ export default function Todos() {
         return 0;
     }
     
-    // Fetches the todos from the user's todos Schema when the Todos.js components mounts/loads
-        useEffect(() => {
-            fetch(`http://localhost:4000/todos`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Basic ${credentials.username}:${credentials.password}`,
-            },
+    // Fetches the Todos array from the user's Todos model when the Todos.js components loads/reloads
+    useEffect(() => {
+        fetch(`http://localhost:4000/todos`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${credentials.username}:${credentials.password}`,
+        },
         })
+
         .then((response) => response.json())
         .then((todos) => {
             
@@ -76,8 +77,9 @@ export default function Todos() {
             console.log("useEffect() triggered")
             // console.log(todos)
         })
-        }, [])
+    }, [])
 
+    // Creates a Todo task
     const addTodo = (e) => {
         e.preventDefault()
         if(!todoText) return; // Prevents the user from creating a blank todo
@@ -105,23 +107,26 @@ export default function Todos() {
         return date;
     }
 
-
+    // Hides checked Todo task that has this id
     const toggleTodo = (id) => {
         const newTodoList = [...todos];
         
         // changes the value of "checked" to its opposite
         const todoItem = newTodoList.find((todo) => todo.id === id)
-        todoItem.checked = !todoItem.checked;
+        todoItem.checked = !todoItem.checked; // Changes checked value to the opposite of what it was
         
-        setTodos(newTodoList);
+        setTodos(newTodoList); // Sends a new array of todo tasks with updated checkbox values
         persist(newTodoList);
         persistFetch()
     }
 
+    // Filters the "todo" array and shows the Todo tasks that match the "filter" variable's value.
+    // If the filter = "completed" we only want to render the tasks that are checked; otherwise, it renders the unchecked.
     const getTodos = () => {
         return todos.filter((todo) => filter === "completed" ? todo.checked : !todo.checked);
     }
 
+    // Changes the "filter" variable's value to what we selected in Select
     const changeFilter = (newFilter) => {
         setFilter(newFilter);
     }
@@ -132,6 +137,7 @@ export default function Todos() {
             <option value="completed">Completed</option>
             <option value="uncompleted">Uncompleted</option>
         </select>
+
         {getTodos().map((todo) => (
             <div key={todo.id} >
                 <input 
@@ -147,6 +153,7 @@ export default function Todos() {
         ))}
 
         <br />
+
         <form onSubmit={addTodo}>
             <input 
                 value={todoText}
@@ -155,6 +162,7 @@ export default function Todos() {
             </input>
             <button type="submit">Add</button>
         </form>
+        
     </div>
     )
 }

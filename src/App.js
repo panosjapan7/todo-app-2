@@ -8,7 +8,10 @@ import Login from './pages/Login';
 export const CredentialsContext = React.createContext();
 
 function App() {
+  
+  // Whatever I set inside this state, I can access inside of my components
   const credentialsState = useState(null);
+
   return (
     <div className="App">
       <CredentialsContext.Provider value={credentialsState}>
