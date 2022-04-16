@@ -144,14 +144,14 @@ app.get("/todos", async (req, res) => {
         //     return 0;
         // }
 
-        if(todos !== undefined){
+        // if(todos !== undefined){
 
-            todos.sort(function sortTasks(a, b){
-                return a.time - b.time;
-            })
+        //     todos.sort(function sortTasks(a, b){
+        //         return a.time - b.time;
+        //     })
             
-            // todos.reverse()
-        }
+        //     // todos.reverse()
+        // }
 
         // todos.sort(sortTasks);
     // End of: Sorts the todos array to descending by time
