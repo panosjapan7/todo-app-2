@@ -14,6 +14,7 @@ export function Welcome() {
 
     return (
     <div>
+        <br/>
         {credentials && <button onClick={logout} >Logout</button>}
 
         <h1>Welcome {credentials && credentials.username}</h1>
