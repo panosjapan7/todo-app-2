@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CredentialsContext } from '../App'
 
 const handleErrors = async (response) => {
@@ -63,6 +63,8 @@ export function Register() {
             <br/>
             <button type="submit">Register</button>
         </form>
+        <br />
+        <Link to="/login">Don't have an account? Login here.</Link>
     </div>
   )
 }
