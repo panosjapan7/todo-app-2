@@ -48,9 +48,13 @@ export default function Todos() {
         console.log("sortBy value in persistFetch:", sortBy)
 
 
-        if(sortBy === "time"){
+        if(sortBy === "timeAsc"){
             // todos.sort(sortTasks) // sorts task by time
             todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+        }
+        if(sortBy === "timeDesc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
         }
         if(sortBy === "textAsc"){
             todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
@@ -93,9 +97,13 @@ export default function Todos() {
             console.log("sortBy value in useEffect:", sortBy)
            
             // Sorting    
-            if(sortBy === "time"){
+            if(sortBy === "timeAsc"){
                 // todos.sort(sortTasks) // sorts task by time
                 todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+            }
+            if(sortBy === "timeDesc"){
+                // todos.sort(sortTasks) // sorts task by time
+                todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
             }
             if(sortBy === "textAsc"){
                 todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
@@ -221,7 +229,8 @@ export default function Todos() {
         {/* Sort By Bar */}
         <label>Sort By: </label>
         <select  onChange={(e) => {currentSortSelectValue(e.target.value)}}>
-            <option value="time" >Time</option>
+            <option value="timeAsc" >Time (ascending)</option>
+            <option value="timeDesc" >Time (descending)</option>
             <option value="textAsc" >Text (ascending)</option>
             <option value="textDesc" >Text (descending)</option>
         </select>
