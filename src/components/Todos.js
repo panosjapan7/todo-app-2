@@ -8,6 +8,9 @@ export default function Todos() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
     const [filter, setFilter] = useState("uncompleted"); 
     
+    //For Sorting function
+    const [sortBy, setSortBy] = useState("time")
+    //END OF For Sorting function
 
     // For Search function
         const [searchInput, setSearchInput] = useState("");
@@ -41,12 +44,22 @@ export default function Todos() {
     })
     .then((response) => response.json())
     .then((todos) => {
-        
-        todos.sort(sortTasks) // sorts task by time
-        
-        // todos.reverse() 
+        console.log("persistFetch triggered")
+        console.log("sortBy value in persistFetch:", sortBy)
 
-        setTodos(todos)
+
+        if(sortBy === "time"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+        }
+        if(sortBy === "textAsc"){
+            todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
+        }
+        if(sortBy === "textDesc"){
+            todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
+        };
+
+        setTodos(todos);
     })
     }
 
@@ -61,8 +74,10 @@ export default function Todos() {
         return 0;
     }
     
+    
     // Fetches the Todos array from the user's Todos model when the Todos.js components loads/reloads
     useEffect(() => {
+        
         fetch(`http://localhost:4000/todos`, {
         method: "GET",
         headers: {
@@ -74,15 +89,24 @@ export default function Todos() {
         .then((response) => response.json())
         .then((todos) => {
             
-            todos.sort(sortTasks); // sorts task by time
-            
-            // todos.reverse() 
-
-            setTodos(todos)
             console.log("useEffect() triggered")
-            // console.log(todos)
+            console.log("sortBy value in useEffect:", sortBy)
+           
+            // Sorting    
+            if(sortBy === "time"){
+                // todos.sort(sortTasks) // sorts task by time
+                todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+            }
+            if(sortBy === "textAsc"){
+                todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
+            }
+            if(sortBy === "textDesc"){
+                todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
+            }
+
+            setTodos(todos);
         })
-    }, [])
+    }, [sortBy])
 
     // Creates a Todo task
     const addTodo = (e) => {
@@ -138,9 +162,7 @@ export default function Todos() {
 
     // For Search function
         const searchFunction = (query) => {
-            
             if(query){
-                
                 const result = todos.filter((todo) => todo.text.toLowerCase().includes(query.toLowerCase()) && todo.checked == false)
                 
                 console.log(result)
@@ -149,9 +171,7 @@ export default function Todos() {
         }
 
         const searchFunctionCompleted = (query) => {
-            
             if(query){
-                
                 const result = todos.filter((todo) => todo.text.toLowerCase().includes(query.toLowerCase()) && todo.checked == true)
                 
                 console.log(result)
@@ -160,6 +180,18 @@ export default function Todos() {
         }
 
     // END OF For Search function
+    
+
+    // For sorting function
+        // Store current select value
+        const currentSortSelectValue = (e) => {
+            console.log("currentSortSelectValue triggered")
+            console.log("e:")
+            console.log(e)
+            setSortBy(e)
+            return setSortBy(e)
+        }
+    // END OF For sorting function
 
 
     return (
@@ -172,6 +204,7 @@ export default function Todos() {
         <br/>
         <br/>
         
+        {/* Search Bar */}
         <form // onSubmit={searchFunction()}
         >
             <input
@@ -184,8 +217,21 @@ export default function Todos() {
         </form>
 
         <br/>
+
+        {/* Sort By Bar */}
+        <label>Sort By: </label>
+        <select  onChange={(e) => {currentSortSelectValue(e.target.value)}}>
+            <option value="time" >Time</option>
+            <option value="textAsc" >Text (ascending)</option>
+            <option value="textDesc" >Text (descending)</option>
+        </select>
+        
+        <br/>
+
+        <br/>
         
         
+        {/* Search List of Uncompleted Todo Tasks */}
         {searchInput && filter === "uncompleted" && searchFunction(searchInput).map((todo) => (
             <div key={todo.id}>
                 <input 
@@ -199,10 +245,9 @@ export default function Todos() {
                 <br/>
             </div>
             ))
-            
-            // <p>TEST</p>
         }
 
+        {/* Search List of Completed Todo Tasks */}
         {searchInput && filter === "completed" && searchFunctionCompleted(searchInput).map((todo) => (
             <div key={todo.id}>
                 <input 
@@ -216,10 +261,9 @@ export default function Todos() {
                 <br/>
             </div>
             ))
-            
-            // <p>TEST</p>
         }
 
+        {/* List of Todo Tasks */}
         {!searchInput && getTodos().map((todo) => (
             <div key={todo.id} >
                 <input 
@@ -235,7 +279,8 @@ export default function Todos() {
         ))}
 
         <br />
-
+        
+        {/* Add a new Todo Task */}
         <form onSubmit={addTodo}>
             <input 
                 value={todoText}
