@@ -16,7 +16,7 @@ export default function Todos() {
         const [searchInput, setSearchInput] = useState("");
     // END OF For Search function
 
-    // Makes a request to backend and sends the current state of the Todos array
+    // Makes a request to backend and sends the current state of the Todos array to our backend
     const persist = (newTodos) => {
         fetch(`http://localhost:4000/todos`, {
             method: "POST",
@@ -24,7 +24,7 @@ export default function Todos() {
                 "Content-Type": "application/json",
                 Authorization: `Basic ${credentials.username}:${credentials.password}`,
             },
-            body: JSON.stringify(newTodos), //we're passing the todos
+            body: JSON.stringify(newTodos), //we're passing the updated todos array
         })
         .then(() => {
             persistFetch();
@@ -149,7 +149,7 @@ export default function Todos() {
         const newTodoList = [...todos];
         
         // changes the value of "checked" to its opposite
-        const todoItem = newTodoList.find((todo) => todo.id === id)
+        const todoItem = newTodoList.find((todo) => todo.id === id) // Finds the todo task whose checkbox was clicked
         todoItem.checked = !todoItem.checked; // Changes checked value to the opposite of what it was
         
         setTodos(newTodoList); // Sends a new array of todo tasks with updated checkbox values
