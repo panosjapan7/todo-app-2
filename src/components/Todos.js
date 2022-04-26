@@ -9,12 +9,10 @@ export default function Todos() {
     const [filter, setFilter] = useState("uncompleted"); 
     
     //For Sorting function
-    const [sortBy, setSortBy] = useState("time")
-    //END OF For Sorting function
+        const [sortBy, setSortBy] = useState("time")
 
     // For Search function
         const [searchInput, setSearchInput] = useState("");
-    // END OF For Search function
 
     // Makes a request to backend and sends the current state of the Todos array to our backend
     const persist = (newTodos) => {
@@ -26,46 +24,9 @@ export default function Todos() {
             },
             body: JSON.stringify(newTodos), //we're passing the updated todos array
         })
-        .then(() => {
-            persistFetch();
-            console.log("persistFetch() triggered")
-        })
+        .then(() => {})
     };    
 
-    // I execute this when the user adds a new task while logged in - otherwise, I need to refresh the page in some way to execute useEffect() again and do the rendering
-    // and I wasn't sure how to achieve that.
-    const persistFetch = () => {
-        fetch(`http://localhost:4000/todos`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${credentials.username}:${credentials.password}`,
-        },
-    })
-    .then((response) => response.json())
-    .then((todos) => {
-        console.log("persistFetch triggered")
-        console.log("sortBy value in persistFetch:", sortBy)
-
-
-        if(sortBy === "timeAsc"){
-            // todos.sort(sortTasks) // sorts task by time
-            todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
-        }
-        if(sortBy === "timeDesc"){
-            // todos.sort(sortTasks) // sorts task by time
-            todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
-        }
-        if(sortBy === "textAsc"){
-            todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
-        }
-        if(sortBy === "textDesc"){
-            todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
-        };
-
-        setTodos(todos);
-    })
-    }
 
     // Sorts tasks by time field        
     function sortTasks(a, b) {
@@ -78,8 +39,8 @@ export default function Todos() {
         return 0;
     }
     
-    
-    // Fetches the Todos array from the user's Todos model when the Todos.js components loads/reloads
+
+    // Fetches the Todos array from the user's Todos model when the Todos.js components loads/reloads or sorts
     useEffect(() => {
         
         fetch(`http://localhost:4000/todos`, {
@@ -114,7 +75,7 @@ export default function Todos() {
 
             setTodos(todos);
         })
-    }, [sortBy])
+    }, [sortBy, todos])
 
     // Creates a Todo task
     const addTodo = (e) => {
@@ -126,23 +87,21 @@ export default function Todos() {
         console.log(newTodo.time);
 
         todos.unshift(newTodo); //Inserts thew newly added todo task element in the first position in the array instead of the last position
-
-        // const newTodos = [...todos, newTodo];
-        // const newTodos = [...todos];
         
         setTodos(todos)
         
         setTodoText(""); // clears the text if the input that adds new todo
 
         persist(todos)
-
     }
+
 
     // Turns the value of "time: new Date()" to a more readable date format
     function readableDate(d){
         const date = new Date(d).toGMTString();
         return date;
     }
+
 
     // Hides checked Todo task that has this id
     const toggleTodo = (id) => {
@@ -154,8 +113,9 @@ export default function Todos() {
         
         setTodos(newTodoList); // Sends a new array of todo tasks with updated checkbox values
         persist(newTodoList);
-        persistFetch()
+        // persistFetch()
     }
+
 
     // Filters the "todo" array and shows the Todo tasks that match the "filter" variable's value.
     // If the filter = "completed" we only want to render the tasks that are checked; otherwise, it renders the unchecked.
@@ -163,10 +123,12 @@ export default function Todos() {
         return todos.filter((todo) => filter === "completed" ? todo.checked : !todo.checked);
     }
 
+
     // Changes the "filter" variable's value to what we selected in Select
     const changeFilter = (newFilter) => {
         setFilter(newFilter);
     }
+
 
     // For Search function
         const searchFunction = (query) => {
@@ -219,8 +181,6 @@ export default function Todos() {
                 type="text"
                 onChange={(e) => {setSearchInput(e.target.value); searchFunction(e.target.value)}}
                 placeholder="Search"
-                // onChange={(e) => searchFunction(setSearchInput(e.target.value))}
-                // value={searchInput}
             />
         </form>
 
@@ -283,7 +243,6 @@ export default function Todos() {
                 <label>{todo.text} </label>
                 
                 <span>(created: {readableDate(todo.time)})</span> 
-                
             </div>
         ))}
 
