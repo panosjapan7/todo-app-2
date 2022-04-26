@@ -128,7 +128,6 @@ app.get("/todos", async (req, res) => {
     //End of Authorization
 
     //Finds the todos Schema that matches the user's id
-        console.log("before { todos }");
         const { todos } = await Todos.findOne({userId: user._id}) || {} //Get just the todos from Schema, not the userId
 
         // todos.sort()
