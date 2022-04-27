@@ -59,20 +59,31 @@ app.post("/register", async (req, res) => {
 // Login User - with JWT
 app.post("/login", async (req, res) => {
     const { username, password} = req.body;
-    const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
-    if(!user || user.password !== password){
+    const loggedInUser = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
+    if(!loggedInUser || loggedInUser.password !== password){
         res.status(403);
         res.json({
             message: "Invalid Login",
         });
         return;
     }
-    const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
-    
-    user.token = accessToken;
-    await user.save();
+    const token = jwt.sign(
+        {
+            user_id: loggedInUser._id,
+            username: loggedInUser.username
+        
+        }, process.env.ACCESS_TOKEN_SECRET);
+
+        loggedInUser.token = token;
+    await loggedInUser.save();
+
+        const user = {
+            username: loggedInUser.username,
+            token: loggedInUser.token,
+        }
+
     console.log("user with new token:", user)
-    res.json({accessToken: accessToken});
+    res.json({user: user});
 })
 
 // Login User
