@@ -24,19 +24,64 @@ export default function Todos() {
             },
             body: JSON.stringify(newTodos), //we're passing the updated todos array
         })
-        .then(() => {})
+        .then(() => {
+            persistFetch();
+            console.log("persistFetch() triggered")
+        })
     };    
+
+    // I execute this when the user adds a new task while logged in - otherwise, I need to refresh the page in some way to execute useEffect() again and do the rendering
+    // and I wasn't sure how to achieve that.
+    const persistFetch = () => {
+        fetch(`http://localhost:4000/todos`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${credentials.username}:${credentials.password}`,
+        },
+    })
+    .then((response) => response.json())
+    .then((todos) => {
+        console.log("persistFetch triggered")
+        console.log("sortBy value in persistFetch:", sortBy)
+
+
+        if(sortBy === "timeAsc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+        }
+        if(sortBy === "timeDesc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
+        }
+        if(sortBy === "textAsc"){
+            todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
+        }
+        if(sortBy === "textDesc"){
+            todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
+        };
+
+        setTodos(todos);
+    })
+    }
 
 
     // Sorts tasks by time field        
-    function sortTasks(a, b) {
-        if(a.time < b.time){
-            return 1;
+    function sortTasks() {
+        if(sortBy === "timeAsc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
         }
-        if(a.time > b.time){
-            return -1;
+        if(sortBy === "timeDesc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
         }
-        return 0;
+        if(sortBy === "textAsc"){
+            todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
+        }
+        if(sortBy === "textDesc"){
+            todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
+        }
     }
     
 
@@ -73,9 +118,9 @@ export default function Todos() {
                 todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
             }
 
-            setTodos(todos);
+            setTodos(todos)
         })
-    }, [sortBy, todos])
+    }, [sortBy])
 
     // Creates a Todo task
     const addTodo = (e) => {
@@ -84,10 +129,27 @@ export default function Todos() {
 
         // const newTodo = { id: uuidv4(), checked: false, text: todoText, time: "2022-04-03T07:43:55.557+00:00" }
         const newTodo = { id: uuidv4(), checked: false, text: todoText, time: new Date() }
-        console.log(newTodo.time);
 
         todos.unshift(newTodo); //Inserts thew newly added todo task element in the first position in the array instead of the last position
         
+        // Sorting    
+        if(sortBy === "timeAsc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? 1 : ((a.time > b.time) ? -1 : 0))
+        }
+        if(sortBy === "timeDesc"){
+            // todos.sort(sortTasks) // sorts task by time
+            todos.sort((a,b) => (a.time < b.time) ? -1 : ((a.time > b.time) ? 1 : 0))
+        }
+        if(sortBy === "textAsc"){
+            todos.sort((a,b) => (a.text > b.text) ? 1 : ((b.text > a.text) ? -1 : 0))
+        }
+        if(sortBy === "textDesc"){
+            todos.sort((a,b) => (a.text > b.text) ? -1 : ((b.text > a.text) ? 1 : 0));
+        }
+        // sortTasks();
+
+
         setTodos(todos)
         
         setTodoText(""); // clears the text if the input that adds new todo
@@ -113,7 +175,7 @@ export default function Todos() {
         
         setTodos(newTodoList); // Sends a new array of todo tasks with updated checkbox values
         persist(newTodoList);
-        // persistFetch()
+        persistFetch()
     }
 
 
