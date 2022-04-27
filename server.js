@@ -1,3 +1,6 @@
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -11,6 +14,7 @@ mongoose.connect("mongodb://localhost/todo-app-2");
     const userSchema = new mongoose.Schema({
         username: { type: String, required: true, trim: true},
         password: { type: String, required: true, trim: true},
+        token: {type: String},
     })
     const User = mongoose.model("User", userSchema) // Creates a User model
 
@@ -51,7 +55,8 @@ app.post("/register", async (req, res) => {
     });
 })
 
-// Login User
+
+// Login User - with JWT
 app.post("/login", async (req, res) => {
     const { username, password} = req.body;
     const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
@@ -62,10 +67,29 @@ app.post("/login", async (req, res) => {
         });
         return;
     }
-    res.json({
-        message: "Success",
-    });
+    const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET);
+    
+    user.token = accessToken;
+    await user.save();
+    console.log("user with new token:", user)
+    res.json({accessToken: accessToken});
 })
+
+// Login User
+// app.post("/login", async (req, res) => {
+//     const { username, password} = req.body;
+//     const user = await User.findOne({ username }); //Checks if there is a username in db that's the same as the username passed in req
+//     if(!user || user.password !== password){
+//         res.status(403);
+//         res.json({
+//             message: "Invalid Login",
+//         });
+//         return;
+//     }
+//     res.json({
+//         message: "Success",
+//     });
+// })
 
 // Creates Todos array that contains the tasks
 app.post("/todos", async (req, res) => {
@@ -130,34 +154,27 @@ app.get("/todos", async (req, res) => {
     //Finds the todos Schema that matches the user's id
         const { todos } = await Todos.findOne({userId: user._id}) || {} //Get just the todos from Schema, not the userId
 
-        // todos.sort()
-        
-    // Sorts the todos array to descending by time
-        // function sortTasks(a, b) {
-        //     if(a.time < b.time){
-        //         return 1;
-        //     }
-        //     if(a.time > b.time){
-        //         return -1;
-        //     }
-        //     return 0;
-        // }
-
-        // if(todos !== undefined){
-
-        //     todos.sort(function sortTasks(a, b){
-        //         return a.time - b.time;
-        //     })
-            
-        //     // todos.reverse()
-        // }
-
-        // todos.sort(sortTasks);
-    // End of: Sorts the todos array to descending by time
-    
-    // console.log(todos);
     res.json(todos)
 })
+
+
+function authenticateToken(req, res, next){
+    const authHeader = req.headers["authorization"];
+    // Check first if we have an authHeader; if yes, save the TOKEN portion; otherwise, it will be undefined.
+    const token = authHeader && authHeader.split(" ")[1]; 
+    if(token == null) {
+        return sendStatus(401)
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if(err) {
+            console.log("token:", token)
+            return res.sendStatus(403);} // We can see that you have a token, but this token is no longer valid so you don't have access
+        req.user = user;
+        console.log("req.user:", req.user)
+        next();
+    })
+}
 
 // Connects to server once connection with local db has been established
 const db = mongoose.connection;
