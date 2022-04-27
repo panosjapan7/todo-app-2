@@ -168,7 +168,6 @@ function authenticateToken(req, res, next){
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if(err) {
-            console.log("token:", token)
             return res.sendStatus(403);} // We can see that you have a token, but this token is no longer valid so you don't have access
         req.user = user;
         console.log("req.user:", req.user)
